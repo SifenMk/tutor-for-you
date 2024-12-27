@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "30841547391",
+    "project_id": "sif-mobile-app-acb8b",
+    "storage_bucket": "sif-mobile-app-acb8b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:30841547391:android:4e18b8cd7711d6e5962d4a",
+        "android_client_info": {
+          "package_name": "com.example.tut4u"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAHk_J3-xUVy0vFrgXv1gqvaQaU82umyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:30841547391:android:b64c41183f852831962d4a",
+        "android_client_info": {
+          "package_name": "con.sifmobile.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAHk_J3-xUVy0vFrgXv1gqvaQaU82umyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
