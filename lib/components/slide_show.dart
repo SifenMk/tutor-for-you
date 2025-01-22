@@ -53,11 +53,11 @@ class _SlideshowComponentState extends State<SlideshowComponent> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 16 / 18,
+      aspectRatio: 1,
       child: Stack(
         children: [
           GestureDetector(
-            onTapDown: (_) => _stopAutoScroll(), // Stop on touch
+            onTapDown: (_) => _stopAutoScroll(),
             onTapCancel: _startAutoScroll, // Restart after touch
             onTapUp: (_) => _startAutoScroll(),
             child: PageView.builder(
@@ -72,17 +72,32 @@ class _SlideshowComponentState extends State<SlideshowComponent> {
                 return Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(
-                      widget.slides[index]['image']!,
-                      fit: BoxFit.cover,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        widget.slides[index]['image']!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     Container(
-                      color: Colors.black.withOpacity(0.3),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            // ignore: deprecated_member_use
+                            Colors.black.withOpacity(0.0),
+                            // ignore: deprecated_member_use
+                            Colors.black.withOpacity(0.5),
+                          ],
+                        ),
+                      ),
                     ),
                     Center(
                       child: Text(
                         widget.slides[index]['title']!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 24,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -105,7 +120,7 @@ class _SlideshowComponentState extends State<SlideshowComponent> {
                 widget.slides.length,
                 (index) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   width: _currentPage == index ? 10 : 6,
                   height: _currentPage == index ? 10 : 6,
                   decoration: BoxDecoration(

@@ -23,13 +23,13 @@ class SimpleComponents {
                       : TextInputType.text)),
           maxLines: isLongText ? null : 1,
           minLines: isLongText ? 4 : 1,
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
           decoration: InputDecoration(
             labelText: label,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: const BorderSide(
-                color: Colors.blue,
+                color: Colors.grey,
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -83,7 +83,7 @@ class SimpleComponents {
       label: Text(text),
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -99,7 +99,7 @@ class SimpleComponents {
             onTap: onTap,
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.circular(6),
@@ -107,7 +107,7 @@ class SimpleComponents {
               alignment: Alignment.center,
               child: Text(
                 buttonText,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                   fontSize: 18,

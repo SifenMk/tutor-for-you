@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class BookingPage extends StatefulWidget {
   final Map<String, dynamic> tutorData;
 
-  BookingPage({required this.tutorData});
+  const BookingPage({super.key, required this.tutorData});
 
   @override
   _BookingPageState createState() => _BookingPageState();
@@ -14,6 +14,7 @@ class BookingPage extends StatefulWidget {
 class _BookingPageState extends State<BookingPage> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  bool _isLoading = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -21,6 +22,23 @@ class _BookingPageState extends State<BookingPage> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.blue.shade900, // Header background color
+              onPrimary: Colors.white, // Header text color
+              onSurface: Colors.blue.shade900, // Body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue.shade900, // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -33,6 +51,23 @@ class _BookingPageState extends State<BookingPage> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.blue.shade900, // Header background color
+              onPrimary: Colors.white, // Header text color
+              onSurface: Colors.blue.shade900, // Body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue.shade900, // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -43,15 +78,19 @@ class _BookingPageState extends State<BookingPage> {
 
   Future<void> bookTutor() async {
     try {
+      setState(() {
+        _isLoading = true;
+      });
+
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('You need to be logged in to book a tutor.')),
+          const SnackBar(
+              content: Text('You need to be logged in to book a tutor.')),
         );
         return;
       }
 
-      print(widget.tutorData['id']);
       final doc = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -66,12 +105,12 @@ class _BookingPageState extends State<BookingPage> {
 
       if (date.isEmpty || time.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please fill in all fields.')),
+          const SnackBar(content: Text('Please fill in all fields.')),
         );
         return;
       }
 
-      // Check if booking conflicts exist (Optional)
+      // Check for booking conflicts
       final existingBookings = await FirebaseFirestore.instance
           .collection('bookings')
           .where('tutorId', isEqualTo: tutorId)
@@ -81,7 +120,8 @@ class _BookingPageState extends State<BookingPage> {
 
       if (existingBookings.docs.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('The tutor is not available at this time.')),
+          const SnackBar(
+              content: Text('The tutor is not available at this time.')),
         );
         return;
       }
@@ -94,11 +134,11 @@ class _BookingPageState extends State<BookingPage> {
         'tutorName': tutorName,
         'date': date,
         'time': time,
-        'status': 'pending', // Optional field
+        'status': 'pending',
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Booking confirmed!')),
+        const SnackBar(content: Text('Booking confirmed!')),
       );
 
       Navigator.pop(context); // Go back to the previous screen
@@ -106,6 +146,10 @@ class _BookingPageState extends State<BookingPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to book tutor: $e')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -113,72 +157,150 @@ class _BookingPageState extends State<BookingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Book Tutor'),
+        title: const Text(
+          'Book Tutor',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade900,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tutor Details
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage(widget.tutorData['photoUrl'] ??
-                      'https://via.placeholder.com/150'),
-                ),
-                SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            // Tutor Details Card
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
                   children: [
-                    Text(
-                      widget.tutorData['name'] ?? 'Tutor Name',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(
+                        widget.tutorData['photoImage'] ??
+                            'https://via.placeholder.com/150',
+                      ),
                     ),
-                    Text('Expertise: ${widget.tutorData['expertise']}'),
-                    Row(
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.star, color: Colors.orange),
-                        Text('${widget.tutorData['rating']}'),
+                        Text(
+                          widget.tutorData['name'] ?? 'Tutor Name',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue.shade900,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Expertise: ${widget.tutorData['expertise']}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.star,
+                                color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${widget.tutorData['rating']}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Booking Form
             Text(
               'Schedule a Session',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade900,
+              ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _dateController,
               decoration: InputDecoration(
                 labelText: 'Preferred Date (e.g., 2024-12-30)',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: Colors.blue.shade900),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.blue.shade900),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
+                ),
+                suffixIcon:
+                    Icon(Icons.calendar_today, color: Colors.blue.shade900),
               ),
               readOnly: true,
               onTap: () => _selectDate(context),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _timeController,
               decoration: InputDecoration(
                 labelText: 'Preferred Time (e.g., 10:00 AM)',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: Colors.blue.shade900),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.blue.shade900),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
+                ),
+                suffixIcon:
+                    Icon(Icons.access_time, color: Colors.blue.shade900),
               ),
               readOnly: true,
               onTap: () => _selectTime(context),
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: bookTutor,
-              child: Text('Confirm Booking'),
+            const SizedBox(height: 24),
+            Center(
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : bookTutor,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade900,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        'Confirm Booking',
+                        style: TextStyle(fontSize: 16),
+                      ),
+              ),
             ),
           ],
         ),

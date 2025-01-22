@@ -6,7 +6,10 @@ import 'package:tut4u/screen/TutorDashboard.dart';
 import 'package:tut4u/components/elements.dart';
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _SignUpPageState createState() => _SignUpPageState();
 }
 
@@ -26,7 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (_passwordController.text.trim() !=
         _confirmPasswordController.text.trim()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passwords do not match')),
+        const SnackBar(content: Text('Passwords do not match')),
       );
       return;
     }
@@ -53,7 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Account Created Successfully')),
+        const SnackBar(content: Text('Account Created Successfully')),
       );
       navigateBasedOnRole();
     } on FirebaseAuthException catch (e) {
@@ -70,32 +73,32 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign Up')),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 48),
-              Text(
+              const SizedBox(height: 48),
+              const Text(
                 'Create an Account',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Role: ',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
@@ -119,31 +122,31 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               SimpleComponents.buildTextField(
                   _nameController, "Name", "Enter your name"),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               SimpleComponents.buildTextField(
                   _emailController, "Email", "Enter your email"),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               SimpleComponents.buildTextField(
                   _passwordController, "Password", "Enter your password",
                   isPassword: true),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               SimpleComponents.buildTextField(_confirmPasswordController,
                   "Confirm Password", "Re-enter your password",
                   isPassword: true),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               SimpleComponents.buildButton(
                   isLoading: _isLoading, onTap: _signUp, buttonText: 'Sign Up'),
-              SizedBox(height: 16),
-              SizedBox(height: 24),
+              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                 },
                 child: RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                         text: 'Already have an account? ',
                         style: TextStyle(color: Colors.black),
                         children: [

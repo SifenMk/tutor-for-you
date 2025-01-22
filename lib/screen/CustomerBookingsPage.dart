@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tut4u/components/BookingCard.dart';
 
 class CustomerBookingsPage extends StatefulWidget {
+  const CustomerBookingsPage({super.key});
+
   @override
   _CustomerBookingsPageState createState() => _CustomerBookingsPageState();
 }
@@ -20,19 +22,20 @@ class _CustomerBookingsPageState extends State<CustomerBookingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('My Bookings'),
+        title: const Text('My Bookings'),
+        backgroundColor: Colors.white,
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: getCustomerBookings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No bookings found.'));
+            return const Center(child: Text('No bookings found.'));
           }
 
           final bookings = snapshot.data!.docs;

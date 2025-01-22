@@ -5,7 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class TutorProfilePage extends StatefulWidget {
   final String tutorId;
 
-  TutorProfilePage({required this.tutorId});
+  const TutorProfilePage({super.key, required this.tutorId});
 
   @override
   _TutorProfilePageState createState() => _TutorProfilePageState();
@@ -59,211 +59,314 @@ class _TutorProfilePageState extends State<TutorProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tutor Profile'),
+        title: const Text(
+          'Tutor Profile',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.blue.shade900,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder<Map<String, dynamic>?>(
         future: tutorDetailsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('Tutor details not found.'));
+            return const Center(child: Text('Tutor details not found.'));
           }
 
           final tutorDetails = snapshot.data!;
-
+          print(tutorDetails['profileImage'] == null);
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Profile Header Section
-                Stack(
-                  children: [
-                    Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blue, Colors.blueAccent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 50,
-                      left: MediaQuery.of(context).size.width / 2 - 50,
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                            tutorDetails['profileImage'] ??
-                                'https://via.placeholder.com/150'),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-
-                // Tutor Name and Rating
-                Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        tutorDetails['name'] ?? 'Name not available',
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.star, color: Colors.amber),
-                          SizedBox(width: 4),
-                          Text(
-                            '${tutorDetails['rating'] ?? 'N/A'}',
-                            style: TextStyle(fontSize: 18),
+                Container(
+                  height: 250,
+                  decoration: BoxDecoration(
+                    image: tutorDetails['profileImage'].toString().isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(tutorDetails['profileImage']),
+                            fit: BoxFit.cover,
+                          )
+                        : const DecorationImage(
+                            image: AssetImage('assets/images/profile.jpg'),
+                            fit: BoxFit.cover,
                           ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
                         ],
                       ),
-                    ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          tutorDetails['name'] ?? 'Name not available',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.star, color: Colors.amber),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${tutorDetails['rating'] ?? 'N/A'}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 16),
+
+                // Rating Section
+
+                const SizedBox(height: 24),
 
                 // Bio Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'About Me',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'About Me',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            tutorDetails['bio'] ?? 'Bio not available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        tutorDetails['bio'] ?? 'Bio not available',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Expertise Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Expertise',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Expertise',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            tutorDetails['expertise'] ??
+                                'Expertise not available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        tutorDetails['expertise'] ?? 'Expertise not available',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Hourly Rate Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Hourly Rate',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hourly Rate',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            tutorDetails['hourlyRate'] != null
+                                ? '\$${tutorDetails['hourlyRate']}/hour'
+                                : 'Rate not available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        tutorDetails['hourlyRate'] != null
-                            ? '\$${tutorDetails['hourlyRate']}/hour'
-                            : 'Rate not available',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Contact Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Contact',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Contact',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            tutorDetails['email'] ?? 'Email not available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        tutorDetails['email'] ?? 'Email not available',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
+                const SizedBox(height: 16),
                 // Rating Section
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Rate this Tutor',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8),
-                      Center(
-                        child: RatingBar.builder(
-                          initialRating: userRating ?? 0,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: Colors.amber,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Rate this Tutor',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
                           ),
-                          onRatingUpdate: (rating) {
-                            setState(() {
-                              userRating = rating;
-                            });
-                          },
-                        ),
+                          const SizedBox(height: 8),
+                          Center(
+                            child: RatingBar.builder(
+                              initialRating: userRating ?? 0,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: true,
+                              itemCount: 5,
+                              itemPadding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) => const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              onRatingUpdate: (rating) {
+                                setState(() {
+                                  userRating = rating;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: userRating != null
+                                  ? () async {
+                                      await submitRating(userRating!);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Thank you for rating!')),
+                                      );
+                                    }
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue.shade900,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 40, vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text('Submit Rating'),
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 16),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: userRating != null
-                              ? () async {
-                                  await submitRating(userRating!);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text('Thank you for rating!')),
-                                  );
-                                }
-                              : null,
-                          child: Text('Submit Rating'),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],

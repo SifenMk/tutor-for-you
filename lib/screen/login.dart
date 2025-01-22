@@ -7,6 +7,8 @@ import 'package:tut4u/components/elements.dart';
 import 'package:tut4u/screen/signup.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -28,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text.trim(),
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Successful')),
+        const SnackBar(content: Text('Login Successful')),
       );
       navigateBasedOnRole();
     } on FirebaseAuthException catch (e) {
@@ -46,42 +48,42 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 48),
+              const SizedBox(height: 48),
               Image.asset(
                 'assets/images/logo.jpg',
                 height: 100,
                 width: 300,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-              Text(
+              const Text(
                 'Welcome to TutForYou',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               SimpleComponents.buildTextField(
                   _emailController, "Email", "Enter your email"),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               SimpleComponents.buildTextField(
                   _passwordController, "Password", "Enter your password",
                   isPassword: true),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               SimpleComponents.buildButton(
                   isLoading: _isLoading, onTap: _login, buttonText: 'Login'),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -90,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 },
                 child: RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                         text: 'Don\'t have an account? ',
                         style: TextStyle(color: Colors.black),
                         children: [
